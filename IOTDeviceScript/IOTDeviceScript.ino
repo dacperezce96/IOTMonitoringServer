@@ -41,17 +41,17 @@ PubSubClient client(net);
 
 // WiFi
 // Nombre de la red WiFi
-const char ssid[] = "80k"; // TODO cambiar por el nombre de la red WiFi
+const char ssid[] = "PRTG_DAN"; // TODO cambiar por el nombre de la red WiFi
 // Contraseña de la red WiFi
-const char pass[] = "*****"; // TODO cambiar por la contraseña de la red WiFi
+const char pass[] = "D1018483570*"; // TODO cambiar por la contraseña de la red WiFi
 
 //Conexión a Mosquitto
 #define USER "user1" // TODO Reemplace UsuarioMQTT por un usuario (no administrador) que haya creado en la configuración del bróker de MQTT.
-const char MQTT_HOST[] = "3.92.70.205"; // TODO Reemplace ip.maquina.mqtt por la IP del bróker MQTT que usted desplegó. Ej: 192.168.0.1
+const char MQTT_HOST[] = "34.235.146.158"; // TODO Reemplace ip.maquina.mqtt por la IP del bróker MQTT que usted desplegó. Ej: 192.168.0.1
 const int MQTT_PORT = 8082;
 const char MQTT_USER[] = USER;
 //Contraseña de MQTT
-const char MQTT_PASS[] = "123456"; // TODO Reemplace ContrasenaMQTT por la contraseña correpondiente al usuario especificado.
+const char MQTT_PASS[] = "camilo123456"; // TODO Reemplace ContrasenaMQTT por la contraseña correpondiente al usuario especificado.
 
 //Tópico al que se recibirán los datos
 // El tópico de publicación debe tener estructura: <país>/<estado>/<ciudad>/<usuario>/out
@@ -281,26 +281,25 @@ void receivedCallback(char* topic, byte* payload, unsigned int length) {
   String data = "";
   for (int i = 0; i < length; i++) {
     String mensaje = String((char)payload[i]);
-    if (mensaje.indexOf("ALERT") != -1) {
-      if (mensaje.indexOf("temperatura") != -1){      
-        digitalWrite(LEDT, HIGH); 
-      }
-      if (mensaje.indexOf("humedad") != -1){     
-        digitalWrite(LEDH, HIGH); 
-      }
-    }else if(mensaje.indexOf("OK") != -1) {
-      if (mensaje.indexOf("temperatura") != -1){      
-        digitalWrite(LEDT, LOW); 
-      }
-      if (mensaje.indexOf("humedad") != -1){     
-        digitalWrite(LEDH, LOW); 
-      }
-    }
     data += mensaje;
   }
   Serial.print(data);
   if (data.indexOf("ALERT") != -1) {
     alert = data;
+    if(data.indexOf("temperatura") != -1){      
+      digitalWrite(LEDT, HIGH);
+    }
+    if(data.indexOf("humedad") != -1){      
+      digitalWrite(LEDH, HIGH);
+    }      
+  }
+  if (data.indexOf("OK") != -1){ 
+    if(data.indexOf("temperatura") != -1){      
+      digitalWrite(LEDT, LOW);
+    }
+    if(data.indexOf("humedad") != -1){      
+      digitalWrite(LEDH, LOW);
+    }         
   }
 }
 
@@ -459,10 +458,10 @@ void setup() {
   configureMQTT(); 
 
   pinMode(LEDT, OUTPUT);  
-  digitalWrite(LEDT, LOW);
+  digitalWrite(LEDT, HIGH);
 
   pinMode(LEDH, OUTPUT);  
-  digitalWrite(LEDH, LOW);
+  digitalWrite(LEDH, HIGH);
 }
 
 void loop() {
